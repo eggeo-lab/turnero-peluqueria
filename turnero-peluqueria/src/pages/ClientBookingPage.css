@@ -1,0 +1,20 @@
+.page {
+  width: 100%;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  min-height: 100dvh;
+  background: var(--paper-dim);
+  display: flex;
+  flex-direction: column;
+}
+
+.page__body {
+  flex: 1;
+  padding: 1.4rem 1.25rem 2.5rem;
+}
+
+@media (min-width: 640px) {
+  .page {
+    min-height: 100%;
+  }
+}

@@ -1,0 +1,73 @@
+.dt-step__hint {
+  font-size: var(--fs-body);
+  color: var(--ink-soft);
+  margin: 0 0 1.1rem;
+}
+
+.dt-step__hint strong {
+  color: var(--ink);
+}
+
+.dt-step__days {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.1rem;
+}
+
+.dt-day {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  font-weight: 700;
+  font-size: var(--fs-small);
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+
+.dt-day.is-active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.dt-step__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+  margin-bottom: 1.4rem;
+}
+
+.dt-slot {
+  padding: 0.75rem 0.4rem;
+  border-radius: var(--radius-s);
+  border: 1px solid var(--line);
+  background: var(--paper);
+  font-weight: 700;
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.dt-slot.is-active {
+  background: var(--copper);
+  border-color: var(--copper);
+  color: var(--paper);
+}
+
+.dt-slot:disabled {
+  color: var(--line);
+  border-style: dashed;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.dt-step__empty {
+  color: var(--ink-soft);
+  font-size: var(--fs-body);
+}
+
+.dt-step__cta {
+  margin-top: 0.5rem;
+}

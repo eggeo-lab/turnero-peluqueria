@@ -1,0 +1,11 @@
+.admin-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 700;
+  font-size: var(--fs-small);
+  letter-spacing: 0.02em;
+}

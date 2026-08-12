@@ -1,0 +1,54 @@
+.info-step {
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+}
+
+.info-step__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.info-step__form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.info-step__form label span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
+
+.info-step__form input {
+  padding: 0.85rem 0.9rem;
+  border-radius: var(--radius-s);
+  border: 1px solid var(--line);
+  background: var(--paper);
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+.info-step__form input:focus {
+  border-color: var(--copper);
+}
+
+.info-step__lock-note {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--fs-small);
+  color: var(--ink-soft);
+  margin: 0.1rem 0 0.3rem;
+}
+
+.info-step__error {
+  color: var(--danger);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  margin: 0;
+}

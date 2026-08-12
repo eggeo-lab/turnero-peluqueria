@@ -1,0 +1,83 @@
+.waiting-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 1.5rem 0 0.5rem;
+}
+
+.waiting-step__icon {
+  margin-bottom: 0.3rem;
+}
+
+.waiting-step h2 {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.waiting-step p {
+  color: var(--ink-soft);
+  font-size: var(--fs-body);
+  max-width: 34ch;
+  margin: 0 0 1.3rem;
+}
+
+.waiting-step .ticket {
+  width: 100%;
+  margin-bottom: 1.4rem;
+}
+
+.waiting-step__cancel-zone {
+  margin-top: 0.6rem;
+}
+
+.waiting-step__cancel-link {
+  background: none;
+  border: none;
+  color: var(--danger);
+  font-size: var(--fs-small);
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0.4rem;
+}
+
+.waiting-step__cancel-hint {
+  font-size: var(--fs-small);
+  color: var(--ink-soft);
+  max-width: 32ch;
+  margin: 0;
+}
+
+.waiting-step__confirm {
+  width: 100%;
+  background: var(--danger-tint);
+  border-radius: var(--radius-m);
+  padding: 1rem;
+  margin-top: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.waiting-step__confirm p {
+  margin: 0;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--ink);
+  max-width: none;
+}
+
+.waiting-step__confirm-error {
+  color: var(--danger) !important;
+}
+
+.waiting-step__confirm-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.waiting-step__confirm-actions .btn {
+  flex: 1;
+}

@@ -1,0 +1,24 @@
+.badge {
+  align-self: flex-start;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 0.28rem 0.55rem;
+  border-radius: 20px;
+}
+
+.badge--pending {
+  background: var(--pending-tint);
+  color: var(--pending);
+}
+
+.badge--success {
+  background: var(--success-tint);
+  color: var(--success);
+}
+
+.badge--danger {
+  background: var(--danger-tint);
+  color: var(--danger);
+}

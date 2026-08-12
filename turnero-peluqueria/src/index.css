@@ -1,0 +1,113 @@
+/* =========================================================
+   TOKENS — Turnero Peluquería / Barbería
+   Paleta inspirada en la barbería clásica: tinta, papel de
+   ticket y cobre de navaja. Una sola tipografía (Montserrat)
+   diferenciada por peso, tracking y escala.
+   ========================================================= */
+:root {
+  /* Color */
+  --ink: #1c1b19;
+  --ink-soft: #57534a;
+  --paper: #faf9f6;
+  --paper-dim: #f0eee8;
+  --line: #e4e0d7;
+  --copper: #b06a33;
+  --copper-dark: #8f5527;
+  --copper-tint: #f3e3d3;
+  --success: #3f8557;
+  --success-tint: #e4f0e7;
+  --pending: #c98a1f;
+  --pending-tint: #faf0dc;
+  --danger: #b3402f;
+  --danger-tint: #f7e4e0;
+
+  /* Type scale */
+  --font: 'Montserrat', sans-serif;
+  --fs-display: clamp(1.9rem, 6vw, 2.4rem);
+  --fs-title: 1.25rem;
+  --fs-body: 0.95rem;
+  --fs-small: 0.8rem;
+  --fs-micro: 0.7rem;
+
+  /* Layout */
+  --radius-s: 10px;
+  --radius-m: 16px;
+  --radius-l: 24px;
+  --shadow-card: 0 1px 2px rgba(28, 27, 25, 0.04), 0 8px 24px -12px rgba(28, 27, 25, 0.18);
+  --max-w: 480px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--paper-dim);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+}
+
+button {
+  font-family: var(--font);
+}
+
+input,
+textarea {
+  font-family: var(--font);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--copper);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Utility */
+.eyebrow {
+  font-size: var(--fs-micro);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--copper-dark);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

@@ -1,0 +1,97 @@
+.service-step__hint {
+  font-size: var(--fs-body);
+  color: var(--ink-soft);
+  margin: 0 0 1rem;
+}
+
+.service-step__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.service-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease, transform 0.12s ease;
+}
+
+.service-card:hover {
+  border-color: var(--copper);
+}
+
+.service-card:active {
+  transform: scale(0.99);
+}
+
+.service-card__icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--copper-tint);
+  color: var(--copper-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.service-card__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.service-card__name {
+  font-weight: 700;
+  font-size: 0.97rem;
+}
+
+.service-card__meta {
+  font-size: var(--fs-small);
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.service-card__arrow {
+  color: var(--ink-soft);
+  flex-shrink: 0;
+}
+
+.service-card--skeleton {
+  height: 66px;
+  background: linear-gradient(90deg, var(--paper) 25%, var(--paper-dim) 37%, var(--paper) 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: var(--radius-m);
+  border: 1px solid var(--line);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+.service-step__error {
+  color: var(--danger);
+  font-size: var(--fs-body);
+  background: var(--danger-tint);
+  border-radius: var(--radius-s);
+  padding: 0.9rem;
+}

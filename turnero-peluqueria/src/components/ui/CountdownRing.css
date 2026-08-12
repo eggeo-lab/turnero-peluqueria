@@ -1,0 +1,45 @@
+.ring {
+  position: relative;
+  width: 168px;
+  height: 168px;
+  margin: 0 auto;
+}
+
+.ring__progress {
+  stroke: var(--copper);
+  transition: stroke-dashoffset 0.25s linear, stroke 0.3s ease;
+}
+
+.ring--urgente .ring__progress {
+  stroke: var(--danger);
+}
+
+.ring__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring__time {
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.ring--urgente .ring__time {
+  color: var(--danger);
+}
+
+.ring__sub {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin-top: 0.15rem;
+}
