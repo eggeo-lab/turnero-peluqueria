@@ -8,9 +8,25 @@ import './db/index.js'; // inicializa/migra la base al arrancar
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5173';
 
-app.use(cors({ origin: ORIGIN }));
+// CORS_ORIGIN admite uno o varios orígenes separados por coma, para
+// poder tener local + producción funcionando al mismo tiempo, ej:
+// CORS_ORIGIN=http://localhost:5173,https://turnero-peluqueria.vercel.app
+const ORIGINS = (process.env.CORS_ORIGIN || 'http://localhost:5173')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Sin "origin" = requests server-to-server o curl; se permiten.
+      // Origen no reconocido: se deniega en silencio (sin CORS headers,
+      // el navegador lo bloquea solo) en vez de tirar un 500 con detalles.
+      callback(null, !origin || ORIGINS.includes(origin));
+    },
+  })
+);
 app.use(express.json());
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
@@ -32,5 +48,5 @@ setInterval(() => {
 }, JOB_INTERVAL_MS);
 
 app.listen(PORT, () => {
-  console.log(`[server] escuchando en http://localhost:${PORT} (CORS: ${ORIGIN})`);
+  console.log(`[server] escuchando en puerto ${PORT} (CORS: ${ORIGINS.join(', ')})`);
 });

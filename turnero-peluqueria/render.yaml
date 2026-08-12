@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: turnero-peluqueria-backend
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: CORS_ORIGIN
+        sync: false # completar a mano con la URL del frontend en Vercel
+      - key: PUBLIC_APP_URL
+        sync: false # misma URL del frontend, se usa en los links de WhatsApp
+      - key: EVOLUTION_API_URL
+        sync: false
+      - key: EVOLUTION_API_KEY
+        sync: false
+      - key: ADMIN_WHATSAPP
+        sync: false

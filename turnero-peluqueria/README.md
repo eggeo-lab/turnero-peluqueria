@@ -98,9 +98,18 @@ probalo vos mismo end-to-end en el navegador.
 - Reemplazar el polling por WebSockets si el volumen lo justifica.
 - Multi-tenant: hoy el catálogo de servicios y la cuenta bancaria son
   de una sola peluquería.
-- Si se despliega en un hosting estático (Netlify, Vercel, etc.), hay
-  que configurar el fallback de SPA (todas las rutas → `index.html`)
-  para que `/admin/confirmar/:id` no dé 404 al entrar directo por el
-  link de WhatsApp.
 - WhatsApp real: falta cargar `EVOLUTION_API_URL` / `EVOLUTION_API_KEY`
-  / `ADMIN_WHATSAPP` en `backend/.env` (hoy corre en modo mock).
+  / `ADMIN_WHATSAPP` en las variables de entorno del backend (hoy
+  corre en modo mock).
+
+## Deploy (Render + Vercel)
+
+`render.yaml` y `vercel.json` en la raíz ya dejan la configuración
+lista — solo hace falta conectar las cuentas y cargar las variables
+de entorno. Detalle importante: el plan free de Render usa disco
+efímero, así que **el archivo SQLite (y los comprobantes subidos) se
+resetean en cada redeploy**. Para un MVP en pruebas no es grave; si
+en algún momento hay clientes reales dependiendo de esto, hay que
+sumar un disco persistente en Render (Settings → Disks, tiene un
+costo chico) o migrar a Postgres.
+
