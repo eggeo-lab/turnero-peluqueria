@@ -1,4 +1,5 @@
-// Reglas de negocio de tiempo del MVP.
+// Reglas de negocio de tiempo del MVP — espejo de backend/src/lib/reglas.js,
+// que es quien valida de verdad. Si cambiás algo acá, cambialo allá.
 export const HORARIO_APERTURA = 9; // 09:00
 export const HORARIO_CIERRE = 19; // 19:00
 export const PASO_MIN = 30; // grilla de turnos cada 30'

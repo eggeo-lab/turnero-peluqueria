@@ -1,8 +1,14 @@
+# Referencia de la config del backend en Render. Hoy el servicio está
+# configurado a mano en el dashboard (no como Blueprint). Ojo: Render
+# busca render.yaml en la raíz del repo; como este vive en la carpeta
+# anidada, para usarlo como Blueprint hay que indicar la ruta
+# turnero-peluqueria/render.yaml. Las rutas de acá son relativas a la
+# raíz del repo, no a este archivo.
 services:
   - type: web
     name: turnero-peluqueria-backend
     runtime: node
-    rootDir: backend
+    rootDir: turnero-peluqueria/backend
     plan: free
     buildCommand: npm install
     startCommand: npm start
@@ -14,6 +20,8 @@ services:
         sync: false # completar a mano con la URL del frontend en Vercel
       - key: PUBLIC_APP_URL
         sync: false # misma URL del frontend, se usa en los links de WhatsApp
+      - key: ADMIN_KEY
+        sync: false # clave de la bandeja /admin; sin ella GET /api/turnos responde 503
       - key: EVOLUTION_API_URL
         sync: false
       - key: EVOLUTION_API_KEY

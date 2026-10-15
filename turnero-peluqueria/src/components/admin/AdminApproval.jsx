@@ -14,7 +14,7 @@ import Button from '../ui/Button';
 import { API_ORIGIN } from '../../lib/api';
 import './AdminApproval.css';
 
-export default function AdminApproval({ turno, loading, token, onAprobar, onRechazar }) {
+export default function AdminApproval({ turno, loading, error: errorCarga, token, onAprobar, onRechazar }) {
   const [procesando, setProcesando] = useState(null);
   const [error, setError] = useState(null);
 
@@ -27,25 +27,27 @@ export default function AdminApproval({ turno, loading, token, onAprobar, onRech
     );
   }
 
+  if (errorCarga === 'no_autorizado') {
+    return (
+      <div className="admin-approval admin-approval--empty">
+        <XCircle size={44} weight="fill" color="var(--danger)" />
+        <h2>{token ? 'Link inválido' : 'Link incompleto'}</h2>
+        <p>
+          {token
+            ? 'El código de autorización de este link no es válido.'
+            : 'A este link le falta el código de autorización.'}{' '}
+          Usá el link completo que llegó por WhatsApp, no solo la URL del turno.
+        </p>
+      </div>
+    );
+  }
+
   if (!turno) {
     return (
       <div className="admin-approval admin-approval--empty">
         <ClockCountdown size={40} />
         <h2>Turno no encontrado</h2>
         <p>Este link ya no es válido o el turno fue eliminado.</p>
-      </div>
-    );
-  }
-
-  if (!token && turno.estado === 'PENDIENTE_COMPROBANTE') {
-    return (
-      <div className="admin-approval admin-approval--empty">
-        <XCircle size={44} weight="fill" color="var(--danger)" />
-        <h2>Link incompleto</h2>
-        <p>
-          A este link le falta el código de autorización. Usá el link completo que llegó por
-          WhatsApp, no solo la URL del turno.
-        </p>
       </div>
     );
   }
@@ -66,6 +68,20 @@ export default function AdminApproval({ turno, loading, token, onAprobar, onRech
         <XCircle size={44} weight="fill" color="var(--danger)" />
         <h2>Turno rechazado</h2>
         <p>Ya marcaste este turno como rechazado.</p>
+      </div>
+    );
+  }
+
+  if (turno.estado === 'CANCELADO' || turno.estado === 'EXPIRADO') {
+    return (
+      <div className="admin-approval admin-approval--empty">
+        <XCircle size={44} weight="fill" color="var(--danger)" />
+        <h2>{turno.estado === 'CANCELADO' ? 'Turno cancelado' : 'Reserva vencida'}</h2>
+        <p>
+          {turno.estado === 'CANCELADO'
+            ? 'El cliente canceló este turno. El horario quedó libre.'
+            : 'El cliente no subió el comprobante a tiempo. El horario quedó libre.'}
+        </p>
       </div>
     );
   }
@@ -131,7 +147,7 @@ export default function AdminApproval({ turno, loading, token, onAprobar, onRech
       <div className="admin-approval__comprobante">
         <span className="eyebrow">Comprobante</span>
         <img
-          src={`${API_ORIGIN}${turno.comprobanteUrl}`}
+          src={`${API_ORIGIN}${turno.comprobanteUrl}?t=${encodeURIComponent(token)}`}
           alt="Comprobante de transferencia enviado por el cliente"
         />
       </div>

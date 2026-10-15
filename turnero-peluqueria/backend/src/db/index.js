@@ -13,6 +13,15 @@ db.pragma('foreign_keys = ON');
 const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
 db.exec(schema);
 
+// No hay migraciones: schema.sql solo crea lo que falta. Si la base es
+// anterior a un cambio de columnas (ej. client_token), se avisa en vez
+// de fallar más adelante con un error de SQL confuso.
+const columnas = db.prepare('PRAGMA table_info(turnos)').all().map((c) => c.name);
+if (!columnas.includes('client_token')) {
+  console.error(`[db] ${DB_PATH} tiene un esquema viejo (falta turnos.client_token). Borrala y reiniciá.`);
+  process.exit(1);
+}
+
 // Seed del catálogo de servicios si la tabla está vacía. En producción
 // esto lo administraría el peluquero desde un panel, no un seed fijo.
 const yaTieneServicios = db.prepare('SELECT COUNT(*) AS n FROM servicios').get().n > 0;

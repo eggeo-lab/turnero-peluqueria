@@ -1,4 +1,5 @@
 import { Scissors, ShieldCheck, Clock, ChatCircleDots } from '@phosphor-icons/react';
+import { NEGOCIO } from '../../data/negocio';
 import './AppShell.css';
 
 const FEATURES = [
@@ -14,7 +15,7 @@ export default function AppShell({ children, variant = 'client' }) {
         <aside className="app-shell__brand">
           <div className="app-shell__brand-mark">
             <Scissors size={20} weight="bold" />
-            <span>Estudio Navaja</span>
+            <span>{NEGOCIO.nombre}</span>
           </div>
 
           <h1 className="app-shell__headline">

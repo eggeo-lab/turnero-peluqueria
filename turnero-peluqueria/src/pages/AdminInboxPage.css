@@ -50,3 +50,55 @@
   font-size: var(--fs-small);
   color: var(--ink-soft);
 }
+
+.admin-inbox__key {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.admin-inbox__key label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.admin-inbox__key label span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
+
+.admin-inbox__key input {
+  padding: 0.85rem 0.9rem;
+  border-radius: var(--radius-s);
+  border: 1px solid var(--line);
+  background: var(--paper);
+  font-family: var(--font);
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+.admin-inbox__key input:focus {
+  border-color: var(--copper);
+}
+
+.admin-inbox__error {
+  color: var(--danger);
+  font-size: var(--fs-small);
+  margin: 0 0 0.8rem;
+}
+
+.admin-inbox__logout {
+  margin-top: 1.2rem;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font);
+  font-size: var(--fs-small);
+  color: var(--ink-soft);
+  text-decoration: underline;
+  cursor: pointer;
+}

@@ -8,7 +8,7 @@ import {
 } from '@phosphor-icons/react';
 import { useCountdown } from '../../hooks/useCountdown';
 import { RESERVA_TIMER_MIN } from '../../lib/slots';
-import { CUENTA_TRANSFERENCIA } from '../../data/services';
+import { NEGOCIO } from '../../data/negocio';
 import CountdownRing from '../ui/CountdownRing';
 import TicketCard from '../ui/TicketCard';
 import Button from '../ui/Button';
@@ -98,9 +98,9 @@ export default function PaymentStep({ turno, onComprobanteListo, onExpirado }) {
 
       <div className="payment-step__cuenta">
         <span className="eyebrow">Transferir seña · ${turno.servicio.senia.toLocaleString('es-AR')}</span>
-        <CopyField label="Alias" value={CUENTA_TRANSFERENCIA.alias} />
-        <CopyField label="CBU" value={CUENTA_TRANSFERENCIA.cbu} />
-        <CopyField label="Titular" value={CUENTA_TRANSFERENCIA.titular} />
+        <CopyField label="Alias" value={NEGOCIO.cuenta.alias} />
+        <CopyField label="CBU" value={NEGOCIO.cuenta.cbu} />
+        <CopyField label="Titular" value={NEGOCIO.cuenta.titular} />
       </div>
 
       <div className="payment-step__upload">

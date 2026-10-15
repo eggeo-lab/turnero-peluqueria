@@ -18,3 +18,10 @@
     min-height: 100%;
   }
 }
+
+.page__loading {
+  color: var(--ink-soft);
+  font-size: var(--fs-body);
+  text-align: center;
+  margin-top: 2rem;
+}

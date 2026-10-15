@@ -40,7 +40,8 @@ CREATE TABLE IF NOT EXISTS turnos (
   reservado_hasta INTEGER,           -- epoch ms; NULL = ya no depende del timer
   comprobante_path TEXT,
   motivo_rechazo TEXT,
-  admin_token TEXT NOT NULL,         -- secreto para aprobar/rechazar; va en el link de WhatsApp
+  admin_token TEXT NOT NULL,         -- secreto del peluquero: ver turno/comprobante, aprobar/rechazar; va en el link de WhatsApp
+  client_token TEXT NOT NULL,        -- secreto del cliente: ver turno, subir comprobante, cancelar; solo en la respuesta de POST /turnos
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL
 );

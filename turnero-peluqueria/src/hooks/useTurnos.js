@@ -4,113 +4,104 @@ import { api, ApiError } from '../lib/api';
 const POLL_LISTA_MS = 4000;
 const POLL_TURNO_MS = 2500;
 
-// Lista de turnos (para la bandeja del admin y para calcular qué
-// horarios ya están ocupados en el selector de fecha/hora). Hace
-// polling simple; en un siguiente paso se puede cambiar por WebSocket
-// sin tocar los componentes que consumen este hook.
-export function useTurnos({ fecha, poll = true } = {}) {
-  const [turnos, setTurnos] = useState([]);
-  const [loading, setLoading] = useState(true);
+// Polling simple; en un siguiente paso se puede cambiar por WebSocket
+// sin tocar los componentes que consumen estos hooks.
 
-  const cargar = useCallback(async () => {
-    try {
-      const data = await api.getTurnos(fecha);
-      setTurnos(data);
-    } catch {
-      // silencioso: el próximo poll reintenta
-    } finally {
-      setLoading(false);
-    }
-  }, [fecha]);
+// Horarios tomados de un día (endpoint público, sin datos de clientes).
+// Devuelve un Set de 'HH:MM' para pintar el selector.
+export function useOcupados(fecha) {
+  const [ocupados, setOcupados] = useState(() => new Set());
 
   useEffect(() => {
+    if (!fecha) return undefined;
+    let activo = true;
+    const cargar = async () => {
+      try {
+        const data = await api.getOcupados(fecha);
+        if (activo) setOcupados(new Set(data.map((t) => t.hora)));
+      } catch {
+        // silencioso: el próximo poll reintenta
+      }
+    };
     cargar();
-    if (!poll) return;
     const id = setInterval(cargar, POLL_LISTA_MS);
-    return () => clearInterval(id);
-  }, [cargar, poll]);
+    return () => {
+      activo = false;
+      clearInterval(id);
+    };
+  }, [fecha]);
 
-  const reservarSlot = useCallback(async (servicio, fechaSel, hora, cliente) => {
-    try {
-      const turno = await api.crearReserva({ servicioId: servicio.id, fecha: fechaSel, hora, cliente });
-      cargar();
-      return { turno };
-    } catch (err) {
-      if (err instanceof ApiError) return { error: err.code, mensaje: err.mensaje };
-      return { error: 'red', mensaje: 'No pudimos conectar con el servidor.' };
-    }
-  }, [cargar]);
-
-  const subirComprobante = useCallback(async (turnoId, file) => {
-    try {
-      const turno = await api.subirComprobante(turnoId, file);
-      return { turno };
-    } catch (err) {
-      if (err instanceof ApiError) return { error: err.code, mensaje: err.mensaje };
-      return { error: 'red', mensaje: 'No pudimos conectar con el servidor.' };
-    }
-  }, []);
-
-  const aprobarTurno = useCallback(async (turnoId, token) => {
-    try {
-      return { turno: await api.aprobarTurno(turnoId, token) };
-    } catch (err) {
-      return { error: err instanceof ApiError ? err.code : 'red' };
-    }
-  }, []);
-
-  const rechazarTurno = useCallback(async (turnoId, token, motivo) => {
-    try {
-      return { turno: await api.rechazarTurno(turnoId, token, motivo) };
-    } catch (err) {
-      return { error: err instanceof ApiError ? err.code : 'red' };
-    }
-  }, []);
-
-  const cancelarTurno = useCallback(async (turnoId) => {
-    try {
-      return { turno: await api.cancelarTurno(turnoId) };
-    } catch (err) {
-      return { error: err instanceof ApiError ? err.code : 'red', mensaje: err instanceof ApiError ? err.mensaje : null };
-    }
-  }, []);
-
-  return {
-    turnos,
-    loading,
-    refrescar: cargar,
-    reservarSlot,
-    subirComprobante,
-    aprobarTurno,
-    rechazarTurno,
-    cancelarTurno,
-  };
+  return ocupados;
 }
 
-// Observa un único turno por id via polling — reemplaza la suscripción
-// a localStorage. Se usa en la pantalla de pago/espera del cliente y en
-// la vista de aprobación del peluquero, así ambas reflejan el estado
-// real del servidor casi en vivo.
-export function useTurno(turnoId) {
+// Lista completa para la bandeja /admin. Corta el polling ante un error
+// de autenticación (401) o si el servidor no tiene ADMIN_KEY (503).
+export function useTurnosAdmin(adminKey) {
+  const [turnos, setTurnos] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Reset al cambiar de clave: así dos claves malas seguidas vuelven a
+    // disparar el error, y cerrar sesión no deja la lista anterior a la vista.
+    setTurnos([]);
+    setError(null);
+    if (!adminKey) return undefined;
+    let activo = true;
+    let id = null;
+    const cargar = async () => {
+      try {
+        const data = await api.getTurnosAdmin(adminKey);
+        if (activo) {
+          setTurnos(data);
+          setError(null);
+        }
+      } catch (err) {
+        if (!activo) return;
+        const code = err instanceof ApiError ? err.code : 'red';
+        setError(code);
+        if (code !== 'red') clearInterval(id);
+      }
+    };
+    cargar();
+    id = setInterval(cargar, POLL_LISTA_MS);
+    return () => {
+      activo = false;
+      clearInterval(id);
+    };
+  }, [adminKey]);
+
+  return { turnos, error };
+}
+
+// Observa un único turno por id via polling, autenticado con el token
+// del cliente o del peluquero. `error` queda en 'no_autorizado' (token
+// inválido/ausente) o 'no_encontrado'.
+export function useTurno(turnoId, { clientToken, adminToken } = {}) {
   const [turno, setTurno] = useState(null);
   const [loading, setLoading] = useState(!!turnoId);
-  const [notFound, setNotFound] = useState(false);
+  const [error, setError] = useState(null);
   const timerRef = useRef(null);
   const cargarRef = useRef(async () => {});
 
   useEffect(() => {
+    setTurno(null);
+    setError(null);
     if (!turnoId) return undefined;
     let activo = true;
+    setLoading(true);
 
     const cargar = async () => {
       try {
-        const data = await api.getTurno(turnoId);
+        const data = await api.getTurno(turnoId, { clientToken, adminToken });
         if (activo) {
           setTurno(data);
-          setNotFound(false);
+          setError(null);
         }
       } catch (err) {
-        if (activo && err instanceof ApiError && err.status === 404) setNotFound(true);
+        if (activo && err instanceof ApiError && (err.status === 401 || err.status === 404)) {
+          setError(err.code);
+          clearInterval(timerRef.current);
+        }
       } finally {
         if (activo) setLoading(false);
       }
@@ -123,9 +114,31 @@ export function useTurno(turnoId) {
       activo = false;
       clearInterval(timerRef.current);
     };
-  }, [turnoId]);
+  }, [turnoId, clientToken, adminToken]);
 
   const refrescar = useCallback(() => cargarRef.current(), []);
 
-  return { turno, loading, notFound, refrescar };
+  return { turno, loading, error, refrescar };
 }
+
+// Acciones: envuelven la API y devuelven { turno } o { error, mensaje }
+// en vez de tirar excepciones.
+async function ejecutar(fn) {
+  try {
+    return { turno: await fn() };
+  } catch (err) {
+    if (err instanceof ApiError) return { error: err.code, mensaje: err.mensaje };
+    return { error: 'red', mensaje: 'No pudimos conectar con el servidor.' };
+  }
+}
+
+export const acciones = {
+  // { turno } incluye clientToken (solo en esta respuesta).
+  reservar: (servicio, fecha, hora, cliente) =>
+    ejecutar(() => api.crearReserva({ servicioId: servicio.id, fecha, hora, cliente })),
+  subirComprobante: (turnoId, clientToken, file) =>
+    ejecutar(() => api.subirComprobante(turnoId, clientToken, file)),
+  aprobar: (turnoId, adminToken) => ejecutar(() => api.aprobarTurno(turnoId, adminToken)),
+  rechazar: (turnoId, adminToken, motivo) => ejecutar(() => api.rechazarTurno(turnoId, adminToken, motivo)),
+  cancelar: (turnoId, clientToken) => ejecutar(() => api.cancelarTurno(turnoId, clientToken)),
+};

@@ -1,13 +1,19 @@
-import 'dotenv/config';
+import './lib/reglas.js'; // primero: fija TZ=America/Argentina/Buenos_Aires
+import './env.js'; // carga backend/.env antes que el resto
 import express from 'express';
 import cors from 'cors';
-import path from 'node:path';
 import turnosRouter from './routes/turnos.js';
 import { expirarVencidos } from './lib/turnos.js';
 import './db/index.js'; // inicializa/migra la base al arrancar
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// Detrás del proxy de Render, req.ip (que usa el rate limit) tiene que
+// salir de X-Forwarded-For; si no, todos los clientes comparten la IP
+// del proxy y un atacante bloquearía a todos. Render setea RENDER=true.
+const TRUST_PROXY = Number(process.env.TRUST_PROXY || (process.env.RENDER ? 1 : 0));
+if (TRUST_PROXY) app.set('trust proxy', TRUST_PROXY);
 
 // CORS_ORIGIN admite uno o varios orígenes separados por coma, para
 // poder tener local + producción funcionando al mismo tiempo, ej:
@@ -28,7 +34,8 @@ app.use(
   })
 );
 app.use(express.json());
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+// Los comprobantes NO se sirven como estáticos: van por
+// GET /api/turnos/:id/comprobante, que exige el admin_token.
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 app.use('/api', turnosRouter);
@@ -49,4 +56,5 @@ setInterval(() => {
 
 app.listen(PORT, () => {
   console.log(`[server] escuchando en puerto ${PORT} (CORS: ${ORIGINS.join(', ')})`);
+  console.log(`[server] zona horaria ${process.env.TZ} → hora local ${new Date().toString()}`);
 });

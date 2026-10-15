@@ -1,24 +1,24 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Scissors } from '@phosphor-icons/react';
 import AdminApproval from '../components/admin/AdminApproval';
-import { useTurnos, useTurno } from '../hooks/useTurnos';
+import { useTurno, acciones } from '../hooks/useTurnos';
 import './AdminConfirmPage.css';
 
 export default function AdminConfirmPage() {
   const { turnoId } = useParams();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('t');
-  const { turno, loading, notFound, refrescar } = useTurno(turnoId);
-  const { aprobarTurno, rechazarTurno } = useTurnos({ poll: false });
+  // Sin token válido el backend responde 401 y no hay turno que mostrar.
+  const { turno, loading, error, refrescar } = useTurno(turnoId, { adminToken: token });
 
   const handleAprobar = async (id) => {
-    const result = await aprobarTurno(id, token);
+    const result = await acciones.aprobar(id, token);
     await refrescar();
     return result;
   };
 
   const handleRechazar = async (id, motivo) => {
-    const result = await rechazarTurno(id, token, motivo);
+    const result = await acciones.rechazar(id, token, motivo);
     await refrescar();
     return result;
   };
@@ -31,8 +31,9 @@ export default function AdminConfirmPage() {
       </header>
       <main className="page__body">
         <AdminApproval
-          turno={notFound ? null : turno}
+          turno={turno}
           loading={loading}
+          error={error}
           token={token}
           onAprobar={handleAprobar}
           onRechazar={handleRechazar}

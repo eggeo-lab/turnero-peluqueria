@@ -17,41 +17,55 @@ async function request(path, options = {}) {
   return body;
 }
 
+// Headers de autenticación por rol. Cada turno tiene dos secretos:
+//   clientToken → lo recibe el cliente en POST /turnos
+//   adminToken  → lo recibe el peluquero en el link de WhatsApp (?t=)
+function authHeaders({ clientToken, adminToken } = {}) {
+  return {
+    ...(clientToken ? { 'x-client-token': clientToken } : {}),
+    ...(adminToken ? { 'x-admin-token': adminToken } : {}),
+  };
+}
+
+const JSON_HEADERS = { 'Content-Type': 'application/json' };
+
 export const api = {
   getServicios: () => request('/servicios'),
 
-  getTurnos: (fecha) => request(`/turnos${fecha ? `?fecha=${fecha}` : ''}`),
+  // Público: solo { fecha, hora } de los horarios tomados.
+  getOcupados: (fecha) => request(`/turnos/ocupados?fecha=${encodeURIComponent(fecha)}`),
 
-  getTurno: (id) => request(`/turnos/${id}`),
+  // Lista completa para la bandeja /admin (requiere ADMIN_KEY).
+  getTurnosAdmin: (adminKey) => request('/turnos', { headers: { 'x-admin-key': adminKey } }),
 
+  getTurno: (id, auth) => request(`/turnos/${id}`, { headers: authHeaders(auth) }),
+
+  // Devuelve el turno + clientToken (única vez que viaja).
   crearReserva: (payload) =>
-    request('/turnos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    }),
+    request('/turnos', { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify(payload) }),
 
-  subirComprobante: (turnoId, file) => {
+  subirComprobante: (turnoId, clientToken, file) => {
     const form = new FormData();
     form.append('comprobante', file);
-    return request(`/turnos/${turnoId}/comprobante`, { method: 'POST', body: form });
+    return request(`/turnos/${turnoId}/comprobante`, {
+      method: 'POST',
+      headers: authHeaders({ clientToken }),
+      body: form,
+    });
   },
 
-  aprobarTurno: (turnoId, token) =>
-    request(`/turnos/${turnoId}/aprobar`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token }),
-    }),
+  aprobarTurno: (turnoId, adminToken) =>
+    request(`/turnos/${turnoId}/aprobar`, { method: 'POST', headers: authHeaders({ adminToken }) }),
 
-  rechazarTurno: (turnoId, token, motivo) =>
+  rechazarTurno: (turnoId, adminToken, motivo) =>
     request(`/turnos/${turnoId}/rechazar`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token, motivo }),
+      headers: { ...JSON_HEADERS, ...authHeaders({ adminToken }) },
+      body: JSON.stringify({ motivo }),
     }),
 
-  cancelarTurno: (turnoId) => request(`/turnos/${turnoId}/cancelar`, { method: 'POST' }),
+  cancelarTurno: (turnoId, clientToken) =>
+    request(`/turnos/${turnoId}/cancelar`, { method: 'POST', headers: authHeaders({ clientToken }) }),
 };
 
 export { ApiError };

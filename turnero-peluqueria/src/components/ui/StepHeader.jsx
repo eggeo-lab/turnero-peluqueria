@@ -1,7 +1,9 @@
 import { CaretLeft } from '@phosphor-icons/react';
+import { NEGOCIO } from '../../data/negocio';
 import './StepHeader.css';
 
-const PASOS = ['Servicio', 'Turno', 'Seña', 'Listo'];
+// Un paso por pantalla del flujo; el índice lo define PASO_POR_STEP en ClientBookingPage.
+const PASOS = ['Servicio', 'Turno', 'Datos', 'Seña', 'Listo'];
 
 export default function StepHeader({ step, onBack, title }) {
   return (
@@ -16,7 +18,7 @@ export default function StepHeader({ step, onBack, title }) {
           <CaretLeft size={20} weight="bold" />
         </button>
         <div className="step-header__brand">
-          <span className="eyebrow">Estudio Navaja</span>
+          <span className="eyebrow">{NEGOCIO.nombre}</span>
         </div>
         <div className="step-header__spacer" />
       </div>

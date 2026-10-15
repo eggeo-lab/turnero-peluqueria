@@ -53,6 +53,9 @@
 
 .step-header__dots li {
   flex: 1;
+  /* min-width: 0 → los 5 segmentos miden igual aunque una etiqueta sea
+     más larga que su segmento (en 320px "SERVICIO" queda justo). */
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
@@ -71,6 +74,9 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--ink-soft);
+  /* Nunca se parte en dos líneas. Solo la etiqueta activa es visible,
+     así que si desborda lo hace sobre etiquetas ocultas de las vecinas. */
+  white-space: nowrap;
   opacity: 0;
   transition: opacity 0.15s ease;
 }

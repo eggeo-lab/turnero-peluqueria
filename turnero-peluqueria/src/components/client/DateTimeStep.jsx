@@ -1,24 +1,19 @@
 import { useMemo, useState } from 'react';
 import { generarDiasDisponibles, ANTICIPACION_MAX_HORAS } from '../../lib/slots';
+import { useOcupados } from '../../hooks/useTurnos';
 import Button from '../ui/Button';
 import { ArrowRight } from '@phosphor-icons/react';
 import './DateTimeStep.css';
 
-const ESTADOS_ACTIVOS = new Set(['RESERVANDO_CON_TIMER', 'PENDIENTE_COMPROBANTE', 'CONFIRMADO']);
-
-export default function DateTimeStep({ servicio, turnos, onConfirm }) {
+export default function DateTimeStep({ servicio, onConfirm }) {
   const dias = useMemo(() => generarDiasDisponibles(), []);
   const [diaIdx, setDiaIdx] = useState(0);
   const [hora, setHora] = useState(null);
 
   const dia = dias[diaIdx];
 
-  const ocupadosDelDia = useMemo(() => {
-    if (!dia) return new Set();
-    return new Set(
-      turnos.filter((t) => t.fecha === dia.fecha && ESTADOS_ACTIVOS.has(t.estado)).map((t) => t.hora)
-    );
-  }, [turnos, dia]);
+  // Solo { fecha, hora } de los slots activos, desde el endpoint público.
+  const ocupadosDelDia = useOcupados(dia?.fecha);
 
   return (
     <div className="dt-step">
